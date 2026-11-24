@@ -18,7 +18,20 @@ ENTRY = (
 )
 
 
+def validate_entry(text: str) -> None:
+    """Gate self-check (RULES.txt): UTF-8, 1-200 chars, non-blank."""
+    try:
+        text.encode("utf-8")
+    except UnicodeEncodeError as exc:
+        raise ValueError(f"entry is not valid UTF-8: {exc}") from exc
+    if not 1 <= len(text) <= 200:
+        raise ValueError(f"entry must be 1-200 chars, got {len(text)}")
+    if not text.strip():
+        raise ValueError("entry must not be blank")
+
+
 def main() -> None:
+    validate_entry(ENTRY)
     os.makedirs("/output", exist_ok=True)
     with open("/output/entry.txt", "w", encoding="utf-8", newline="") as f:
         f.write(ENTRY)
